@@ -4,511 +4,75 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>El Mentalista</title>
+
+<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Font Awesome -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-<style>
-.scrollbar-hide::-webkit-scrollbar {
-display: none;
-}
-.scrollbar-hide {
--ms-overflow-style: none;
-scrollbar-width: none;
-}
-body, html {
-margin: 0;
-padding: 0;
-height: 100%;
-}
-body::before {
-content: "";
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background-image: url('https://image.tmdb.org/t/p/w500//q3pCsNvJ7CmdJUz2sJEEUY3pOPC.jpg');
-background-size: cover;
-background-position: center;
-z-index: -2;
-}
-body::after {
-content: "";
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: rgba(0, 0, 0, 0.75);
-z-index: -1;
-}
-#iframe-principal {
-width: 100%;
-height: 220px;
-border: none;
-background: black;
-}
-#contenedor-video {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-z-index: 10;
-}
-.capitulo-seleccionado {
-background-color: #FF0000 !important;
-color: #fff !important;
-font-weight: bold;
-border-bottom: none !important;
-}
-</style>
+
+<!-- Estilos propios -->
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body class="text-white font-sans leading-relaxed">
 
-
 <div id="contenedor-video" class="relative">
-<iframe
-id="iframe-principal"
-allowfullscreen
-sandbox="allow-same-origin allow-scripts"
-></iframe>
+  <iframe
+    id="iframe-principal"
+    allowfullscreen
+    sandbox="allow-same-origin allow-scripts"
+  ></iframe>
 
-<a href="https://zinecia.github.io/Home" aria-label="Volver" class="absolute top-3 left-3 text-white text-2xl z-20">
-<i class="fas fa-arrow-left"></i>
-</a>
+  <a href="https://zinecia.github.io/Home" aria-label="Volver" class="absolute top-3 left-3 text-white text-2xl z-20">
+    <i class="fas fa-arrow-left"></i>
+  </a>
 
-<!-- Bloqueador de clics -->
-<div class="absolute top-0 left-0 w-full h-full z-10" style="pointer-events: none;"></div>
+  <!-- Bloqueador de clics -->
+  <div class="absolute top-0 left-0 w-full h-full z-10" style="pointer-events: none;"></div>
 </div>
-
 
 <!-- CONTENIDO -->
 <div class="px-4 pt-60 pb-4 space-y-4">
 
-<div class="flex items-center justify-between">
-<h1 class="text-xl sm:text-2xl font-bold">El Mentalista T<span id="temp-titulo">1</span></h1>
-<button aria-label="Favorito" class="bg-[#1f1f1f] px-3 py-1 rounded text-sm flex items-center gap-2">
+  <div class="flex items-center justify-between">
+    <h1 class="text-xl sm:text-2xl font-bold">El Mentalista T<span id="temp-titulo">1</span></h1>
+    <button aria-label="Favorito" class="bg-[#1f1f1f] px-3 py-1 rounded text-sm flex items-center gap-2">
+      <i class="far fa-heart"></i>
+    </button>
+  </div>
 
-</button>
-</div>
+  <!-- Calificación y género -->
+  <div class="flex flex-wrap items-center gap-3 text-sm text-gray-400">
+    <span><strong class="text-[#FF7F00]">8.4</strong> / 10</span>
+    <span class="text-white">•</span>
+    <span>Crimen,Drama,Misterio,</span><span class="text-white">•</span><span>2008</span>
+  </div>
 
-<!-- Calificación y género -->
-<div class="flex flex-wrap items-center gap-3 text-sm text-gray-400">
-<span><strong class="text-[#FF7F00]">8.4</strong> / 10</span>
-<span class="text-white">•</span>
-<span>Crimen,Drama,Misterio,</span><span class="text-white">•</span><span>2008</span>
-</div>
+  <!-- Selector de Temporadas -->
+  <div class="flex items-center gap-3">
+    <label for="temporada" class="text-sm text-gray-300">Temporada:</label>
+    <select id="temporada" class="bg-[#1f1f1f] text-white px-3 py-1 rounded text-sm">
+      <option value="1">Temporada 1</option>
+      <option value="2">Temporada 2</option>
+      <option value="3">Temporada 3</option>
+      <option value="4">Temporada 4</option>
+      <option value="5">Temporada 5</option>
+      <option value="6">Temporada 6</option>
+      <option value="7">Temporada 7</option>
+    </select>
+  </div>
 
-<!-- Selector de Temporadas -->
-<div class="flex items-center gap-3">
-<label for="temporada" class="text-sm text-gray-300">Temporada:</label>
-<select id="temporada" class="bg-[#1f1f1f] text-white px-3 py-1 rounded text-sm">
-<option value="1">Temporada 1</option>
-<option value="2">Temporada 2</option>
-<option value="3">Temporada 3</option>
-<option value="4">Temporada 4</option>
-<option value="5">Temporada 5</option>
-<option value="6">Temporada 6</option>
-<option value="7">Temporada 7</option>
-</select>
-</div>
+  <div class="flex space-x-2 overflow-x-auto scrollbar-hide pb-1" id="lista-capitulos"></div>
 
-
-<div class="flex space-x-2 overflow-x-auto scrollbar-hide pb-1" id="lista-capitulos">
-
-</div>
-
-<!-- Sinopsis -->
-<div class="bg-[#1e1e1e] rounded-lg p-4 text-sm text-gray-300 leading-relaxed">
-<p><span class="font-semibold text-white">Sinopsis:</span>Patrick Jane es un hombre que trabaja como médium televisivo hasta que sufre un duro golpe cuando su mujer e hija son asesinadas. A partir de entonces, decide usar sus habilidades para ayudar a resolver casos de asesinato, trabajando como detective en el Departamento de Investigación de Crímenes de California. El agente Jane será capaz de ver aquello que los demás no pueden y sus poderes de observación y deducción le darán excelentes resultados.</p>
-</div>
+  <!-- Sinopsis -->
+  <div class="bg-[#1e1e1e] rounded-lg p-4 text-sm text-gray-300 leading-relaxed">
+    <p><span class="font-semibold text-white">Sinopsis:</span>Patrick Jane es un hombre que trabaja como médium televisivo hasta que sufre un duro golpe cuando su mujer e hija son asesinadas. A partir de entonces, decide usar sus habilidades para ayudar a resolver casos de asesinato, trabajando como detective en el Departamento de Investigación de Crímenes de California. El agente Jane será capaz de ver aquello que los demás no pueden y sus poderes de observación y deducción le darán excelentes resultados.</p>
+  </div>
 
 </div>
 
-<script>
-var serieId = "5920";
-var temporadaSelect = document.getElementById('temporada');
-var listaCapitulos = document.getElementById('lista-capitulos');
-var tempTitulo = document.getElementById('temp-titulo');
-var btnFavorito = document.querySelector('button[aria-label="Favorito"]');
-var iconoCorazon = btnFavorito.querySelector('i');
-var iframePrincipal = document.getElementById('iframe-principal');
+<!-- Script -->
+<script src="scripts.js"></script>
 
-var serieActual = {
-id: serieId,
-titulo: "El Mentalista",
-temporada: temporadaSelect.value,
-poster: "https://image.tmdb.org/t/p/w500//snKUzvCl3kGv0RWBjEjnOXMGvdl.jpg"
-};
-
-var videosPorCapitulo = {
-"1": {
-
-"1": "https://vidhidepro.com/v/dnwala7lag9s",
-
-"2": "https://vidhidepro.com/v/6zwq1ccaznlm",
-
-"3": "https://vidhidepro.com/v/cjufr50hkv1u",
-
-"4": "https://vidhidepro.com/v/b4tv5w8w0gty",
-
-"5": "https://vidhidepro.com/v/kk3bgia6ifcp",
-
-"6": "https://vidhidepro.com/v/fxo2n7sazjif",
-
-"7": "https://vidhidepro.com/v/se546r6hjv94",
-
-"8": "https://vidhidepro.com/v/62uspx5q2z5y",
-
-"9": "https://vidhidepro.com/v/9cma6r3a7ybf",
-
-"10": "https://vidhidepro.com/v/45ef51hj9fjp",
-
-"11": "https://vidhidepro.com/v/fp1uxxrgvsx9",
-
-"12": "https://vidhidepro.com/v/guc54d0hnk2r",
-
-"13": "https://vidhidepro.com/v/n6iehqa9hg2b",
-
-"14": "https://vidhidepro.com/v/76xfwl6z9yub",
-
-"15": "https://vidhidepro.com/v/jh4d9mbkfcx4",
-
-"16": "https://vidhidepro.com/v/k2vcqs1pq8z2",
-
-"17": "https://vidhidepro.com/v/s4s7zigkrqo0",
-
-"18": "https://vidhidepro.com/v/5p11svtygo7t",
-
-"19": "https://vidhidepro.com/v/3ehyy00rgkms",
-
-"20": "https://vidhidepro.com/v/hy1lcnjausla",
-
-"21": "https://vidhidepro.com/v/wro656wclyo7",
-
-"22": "https://vidhidepro.com/v/6ow1j6prhvnq",
-
-"23": "https://vidhidepro.com/v/t3vkf6vlinn5",
-
-},
-
-
-"2": {
-
-"1": "https://vidhidepro.com/v/zr6ij4536zyy",
-
-"2": "https://vidhidepro.com/v/gpi9jvpl1kal",
-
-"3": "https://vidhidepro.com/v/eg8ct2cl4ukf",
-
-"4": "https://vidhidepro.com/v/91xlvzdrr497",
-
-"5": "https://vidhidepro.com/v/o8vk0x5iu716",
-
-"6": "https://vidhidepro.com/v/07x3gl7rr6vy",
-
-"7": "https://vidhidepro.com/v/j0ni5dkbenpl",
-
-"8": "https://vidhidepro.com/v/9w4a1230n48e",
-
-"9": "https://vidhidepro.com/v/xk03lz12mun4",
-
-"10": "https://vidhidepro.com/v/2qgjaiablssk",
-
-"11": "https://vidhidepro.com/v/afc9zlvl0mjo",
-
-"12": "https://vidhidepro.com/v/c5obc3zonw4w",
-
-"13": "https://vidhidepro.com/v/wado1phke4fu",
-
-"14": "https://vidhidepro.com/v/py3m8p8v3hnq",
-
-"15": "https://vidhidepro.com/v/lbhfox5dx7ye",
-
-"16": "https://vidhidepro.com/v/nuo4xso7lq52",
-
-"17": "https://vidhidepro.com/v/3c3f4fgf3e5a",
-
-"18": "https://vidhidepro.com/v/jhg9lbzzsk16",
-
-"19": "https://vidhidepro.com/v/21zbrryd63mr",
-
-"20": "https://vidhidepro.com/v/oj64r3n3es20",
-
-"21": "https://vidhidepro.com/v/z6o5j2plahwp",
-
-"22": "https://vidhidepro.com/v/h09jyg1ofg43",
-
-"23": "https://vidhidepro.com/v/sjo60v61gsx4",
-
-},
-
-"3": {
-
-"1": "https://vidhidepro.com/v/z3uht7dm2rb4",
-  "2": "https://vidhidepro.com/v/spg764zsm2x7",
-  "3": "https://vidhidepro.com/v/tkmc4vcdag1s",
-  "4": "https://vidhidepro.com/v/18z56lu0vt3j",
-  "5": "https://vidhidepro.com/v/pva6nigffn7a",
-  "6": "https://vidhidepro.com/v/pm5z46nj5g8a",
-  "7": "https://vidhidepro.com/v/ls1vlmfmthh7",
-  "8": "https://vidhidepro.com/v/4cg8olh47bde",
-  "9": "https://vidhidepro.com/v/skfs809i5tw3",
-  "10": "https://vidhidepro.com/v/exvndhouuqxe",
-  "11": "https://vidhidepro.com/v/tsfp4fz4x6gi",
-  "12": "https://vidhidepro.com/v/fy0z41i6tg1x",
-  "13": "https://vidhidepro.com/v/mdylukvmi19w",
-  "14": "https://vidhidepro.com/v/7f6dfi8rqrfh",
-  "15": "https://vidhidepro.com/v/wyjzmo500v53",
-  "16": "https://vidhidepro.com/v/sp3sxgmewmn8",
-  "17": "https://vidhidepro.com/v/zw41309csz33",
-  "18": "https://vidhidepro.com/v/tzqpcl07kf9h",
-  "19": "https://vidhidepro.com/v/v85y1z3jj7wr",
-  "20": "https://vidhidepro.com/v/l1zgbadqzu9f",
-  "21": "https://vidhidepro.com/v/52wl66kdrf9v",
-  "22": "https://vidhidepro.com/v/wot6ek8r1pk2",
-  "23": "https://vidhidepro.com/v/oebym3hxew0l",
-  "24": "https://vidhidepro.com/v/qnk2wa5uopm0"
-
-},
-
-"4": {
-"1": "https://vidhidepro.com/v/3srhlp0700wd",
-  "2": "https://vidhidepro.com/v/bz8gg4ttuft2",
-  "3": "https://vidhidepro.com/v/7wcxh585cq5q",
-  "4": "https://vidhidepro.com/v/hcs7k373r12i",
-  "5": "https://vidhidepro.com/v/isxr0tviafef",
-  "6": "https://vidhidepro.com/v/r7zql39r13lt",
-  "7": "https://vidhidepro.com/v/si1njove1kp3",
-  "8": "https://vidhidepro.com/v/9rjbbk1grsrb",
-  "9": "https://vidhidepro.com/v/komb5t4or86h",
-  "10": "https://vidhidepro.com/v/n929fzez392k",
-  "11": "https://vidhidepro.com/v/vvzfyxgx5umi",
-  "12": "https://vidhidepro.com/v/5z9g5lbb2ri8",
-  "13": "https://vidhidepro.com/v/lybcne6q53oi",
-  "14": "https://vidhidepro.com/v/5grimgsa9mu1",
-  "15": "https://vidhidepro.com/v/zctwk3j6rkol",
-  "16": "https://vidhidepro.com/v/qgd8lrdsjbva",
-  "17": "https://vidhidepro.com/v/oxe36jhc0e0q",
-  "18": "https://vidhidepro.com/v/2tbxzl85m1u0",
-  "19": "https://vidhidepro.com/v/cocjdq7a3qf8",
-  "20": "https://vidhidepro.com/v/ojptf33yeztr",
-  "21": "https://vidhidepro.com/v/37vvvpd0uvuc",
-  "22": "https://vidhidepro.com/v/s4z1zn5xgr62",
-  "23": "https://vidhidepro.com/v/bs2v82xhgdt7",
-  "24": "https://vidhidepro.com/v/hzhxp0vqba4j"
-
-},
-
-"5": {
-
-"1": "https://vidhidepro.com/v/a47cxj77id6a",
-  "2": "https://vidhidepro.com/v/u4byun62mncm",
-  "3": "https://vidhidepro.com/v/qipx11yejxtd",
-  "4": "https://vidhidepro.com/v/xclpa5u21tkw",
-  "5": "https://vidhidepro.com/v/aevivlbnlg48",
-  "6": "https://vidhidepro.com/v/oufg11wxcbhx",
-  "7": "https://vidhidepro.com/v/lq3tn75qrp0o",
-  "8": "https://vidhidepro.com/v/emn74b8prhb9",
-  "9": "https://vidhidepro.com/v/nmz5u2sq480s",
-  "10": "https://vidhidepro.com/v/mkudwxo27dkj",
-  "11": "https://vidhidepro.com/v/j7rhfqka6nvk",
-  "12": "https://vidhidepro.com/v/xh82ggf6fqop",
-  "13": "https://vidhidepro.com/v/a473u1ayldrn",
-  "14": "https://vidhidepro.com/v/x4gxw1i3ltv7",
-  "15": "https://vidhidepro.com/v/6vo5cvu0ipkh",
-  "16": "https://vidhidepro.com/v/6vo5cvu0ipkh",
-  "17": "https://vidhidepro.com/v/6ql7s0dq1vs8",
-  "18": "https://vidhidepro.com/v/aquzgrzf3nbb",
-  "19": "https://vidhidepro.com/v/klqz08i5byx1",
-  "20": "https://vidhidepro.com/v/14tzjvhc3h4t",
-  "21": "https://vidhidepro.com/v/5r8s4g1vxgq9",
-  "22": "https://vidhidepro.com/v/3mo2ohtf5rc6",
-
-},
-
-"6": {
-"1": "https://vidhidepro.com/v/ty2c8gbmnofs",
-  "2": "https://vidhidepro.com/v/jpet6e1wmus9",
-  "3": "https://vidhidepro.com/v/zek79jy86422",
-  "4": "https://vidhidepro.com/v/ipaj2ed2l5tv",
-  "5": "https://vidhidepro.com/v/u09n5kyk11hw",
-  "6": "https://vidhidepro.com/v/q7quzr9sf8cz",
-  "7": "https://vidhidepro.com/v/858gxu6gmof9",
-  "8": "https://vidhidepro.com/v/j9dmocfps9yk",
-  "9": "https://vidhidepro.com/v/4huc0fhhips2",
-  "10": "https://vidhidepro.com/v/2wuwn9pyz455",
-  "11": "https://vidhidepro.com/v/k0l13bs9wq84",
-  "12": "https://vidhidepro.com/v/py9fr1fe78nq",
-  "13": "https://vidhidepro.com/v/vdm8idez2noy",
-  "14": "https://vidhidepro.com/v/jxrjbccp2pym",
-  "15": "https://vidhidepro.com/v/ny75hrqlpocv",
-  "16": "https://vidhidepro.com/v/9cgsldrtmf15",
-  "17": "https://vidhidepro.com/v/hkgyhdiu02ki",
-  "18": "https://vidhidepro.com/v/4h6hiizxr3bt",
-  "19": "https://vidhidepro.com/v/ixqpff2lprmc",
-  "20": "https://vidhidepro.com/v/kyrinxjf5wux",
-  "21": "https://vidhidepro.com/v/sc7c3xjphp90",
-  "22": "https://vidhidepro.com/v/pdo0gokgx60t",
-},
-
-"7": {
-"1": "https://vidhidepro.com/v/nq61mghx0mlc",
-  "2": "https://vidhidepro.com/v/v8hw8lix2rr4",
-  "3": "https://vidhidepro.com/v/kmy9oem3zqbb",
-  "4": "https://vidhidepro.com/v/a3gein7a00uz",
-  "5": "https://vidhidepro.com/v/5mylq0oq2b3t",
-  "6": "https://vidhidepro.com/v/lnw6ut0ax83j",
-  "7": "https://vidhidepro.com/v/kdq8uc05cfil",
-  "8": "https://vidhidepro.com/v/jvsqbg77klnh",
-  "9": "https://vidhidepro.com/v/9cx9dfcf48x1",
-  "10": "https://vidhidepro.com/v/9kklbxqu7f0w",
-  "11": "https://vidhidepro.com/v/cptwdeapnht0",
-  "12": "https://vidhidepro.com/v/o3kopvhapwqf",
-  "13": "https://lzrdrgz01.github.io/web/?player=jwpl&provider=rand&format=video%2Fmp4&link=https%3A%2F%2Frumble.com%2Fhls-vod%2F6tmc13%2Fplaylist.m3u8"
-},
-
-
-
-
-
-
-};
-
-function cargarFavoritos() {
-var favs = localStorage.getItem('seriesFavoritas');
-return favs ? JSON.parse(favs) : [];
-}
-
-function guardarFavoritos(favoritos) {
-localStorage.setItem('seriesFavoritas', JSON.stringify(favoritos));
-}
-
-function esFavorito(serie, favoritos) {
-return favoritos.some(function(fav) {
-return fav.id === serie.id && fav.temporada === serie.temporada;
-});
-}
-
-function actualizarBotonFavorito() {
-var favoritos = cargarFavoritos();
-if (esFavorito(serieActual, favoritos)) {
-btnFavorito.classList.add('bg-[#FF7F00]');
-iconoCorazon.classList.add('fas');
-iconoCorazon.classList.remove('far');
-} else {
-btnFavorito.classList.remove('bg-[#FF7F00]');
-iconoCorazon.classList.remove('fas');
-iconoCorazon.classList.add('far');
-}
-}
-
-btnFavorito.addEventListener('click', function() {
-var favoritos = cargarFavoritos();
-if (esFavorito(serieActual, favoritos)) {
-favoritos = favoritos.filter(function(fav) {
-return !(fav.id === serieActual.id && fav.temporada === serieActual.temporada);
-});
-} else {
-favoritos.push(Object.assign({}, serieActual));
-}
-guardarFavoritos(favoritos);
-actualizarBotonFavorito();
-});
-
-function guardarTemporada(temporada) {
-localStorage.setItem("temporadaSeleccionada_" + serieId, temporada);
-}
-
-function cargarTemporadaGuardada() {
-var temp = localStorage.getItem("temporadaSeleccionada_" + serieId);
-return temp ? temp : "1";
-}
-
-function guardarCapitulo(capitulo) {
-var key = "ultimoCapituloVisto_" + serieId + "_T" + serieActual.temporada;
-localStorage.setItem(key, capitulo);
-}
-
-function cargarCapituloGuardado() {
-var key = "ultimoCapituloVisto_" + serieId + "_T" + serieActual.temporada;
-var capituloGuardado = localStorage.getItem(key);
-var botones = listaCapitulos.getElementsByClassName('capitulo-btn');
-var encontrado = false;
-
-for (var i = 0; i < botones.length; i++) {
-botones[i].className = botones[i].className.replace(' capitulo-seleccionado', '');
-if (botones[i].getAttribute('data-capitulo') === capituloGuardado) {
-botones[i].className += ' capitulo-seleccionado';
-botones[i].scrollIntoView({ behavior: 'smooth', inline: 'center' });
-cambiarVideo(capituloGuardado);
-encontrado = true;
-}
-}
-if (!encontrado) {
-cambiarVideo("1");
-}
-}
-
-function cambiarVideo(capitulo) {
-var temp = serieActual.temporada;
-var url = videosPorCapitulo[temp] && videosPorCapitulo[temp][capitulo];
-if (url) {
-iframePrincipal.src = url;
-guardarCapitulo(capitulo);
-}
-}
-
-function generarCapitulos(temporada) {
-listaCapitulos.innerHTML = '';
-var capitulosObj = videosPorCapitulo[temporada] || {};
-var total = Object.keys(capitulosObj).length;
-
-for (var i = 1; i <= total; i++) {
-var btn = document.createElement('button');
-btn.className = 'capitulo-btn px-4 py-2 rounded bg-[#2a2a2a] text-white';
-btn.setAttribute('data-capitulo', i.toString());
-btn.textContent = i;
-listaCapitulos.appendChild(btn);
-}
-agregarEventosCapitulos();
-cargarCapituloGuardado();
-}
-
-function agregarEventosCapitulos() {
-var botones = listaCapitulos.getElementsByClassName('capitulo-btn');
-for (var i = 0; i < botones.length; i++) {
-(function(index){
-botones[index].onclick = function() {
-for (var j = 0; j < botones.length; j++) {
-botones[j].className = botones[j].className.replace(' capitulo-seleccionado', '');
-}
-if (botones[index].className.indexOf('capitulo-seleccionado') === -1) {
-botones[index].className += ' capitulo-seleccionado';
-}
-botones[index].scrollIntoView({ behavior: 'smooth', inline: 'center' });
-cambiarVideo(botones[index].getAttribute('data-capitulo'));
-};
-})(i);
-}
-}
-
-temporadaSelect.onchange = function() {
-var temp = temporadaSelect.value;
-serieActual.temporada = temp;
-tempTitulo.textContent = temp;
-guardarTemporada(temp);
-generarCapitulos(temp);
-actualizarBotonFavorito();
-};
-
-window.onload = function() {
-var tempGuardada = cargarTemporadaGuardada();
-temporadaSelect.value = tempGuardada;
-serieActual.temporada = tempGuardada;
-tempTitulo.textContent = tempGuardada;
-generarCapitulos(tempGuardada);
-actualizarBotonFavorito();
-};
-</script>
 </body>
 </html>
